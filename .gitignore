@@ -32,3 +32,9 @@ npm-debug.log*
 frontend/AGENTS.md
 frontend/CLAUDE.md
 
+# Databases
+*.db
+backend/croked.db
+backend/app/market_cache.db
+
+
