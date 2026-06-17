@@ -42,7 +42,15 @@ from app.models import (
     ResetPasswordRequest,
 )
 
-logging.basicConfig(level=logging.INFO)
+LOG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "croked_debug.log")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(LOG_FILE, encoding='utf-8')
+    ]
+)
 logger = logging.getLogger(__name__)
 
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.rate_limit])
@@ -116,6 +124,19 @@ async def security_headers(request: Request, call_next):
 @limiter.limit(settings.rate_limit)
 async def health(request: Request):
     return HealthResponse(status="ok", market="NSE/BSE India", version="0.1.0")
+
+
+@app.get("/api/debug/logs")
+async def get_debug_logs():
+    try:
+        if os.path.exists(LOG_FILE):
+            with open(LOG_FILE, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+            return {"logs": "".join(lines[-200:])}
+        else:
+            return {"error": "Log file not found"}
+    except Exception as e:
+        return {"error": str(e)}
 
 
 @app.get("/api/stocks/search", response_model=list[StockSearchResult])
