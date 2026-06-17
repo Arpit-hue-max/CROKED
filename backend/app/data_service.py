@@ -43,8 +43,7 @@ def fetch_ohlcv_yfinance(symbol: str, period: str = "1y", interval: str = "1d") 
     if period not in PERIOD_MAP:
         raise ValueError(f"Invalid period. Choose from: {', '.join(PERIOD_MAP)}")
 
-    session = _create_yfinance_session()
-    ticker = yf.Ticker(symbol, session=session)
+    ticker = yf.Ticker(symbol)
     df = ticker.history(period=period, interval=interval, auto_adjust=True)
 
     if df.empty:
@@ -231,8 +230,7 @@ def df_to_records(df: pd.DataFrame) -> list[dict]:
 
 def get_stock_info(symbol: str) -> dict:
     try:
-        session = _create_yfinance_session()
-        ticker = yf.Ticker(symbol, session=session)
+        ticker = yf.Ticker(symbol)
         info = ticker.info or {}
         return {
             "name": info.get("longName") or info.get("shortName") or symbol,

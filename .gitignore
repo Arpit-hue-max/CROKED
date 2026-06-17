@@ -38,3 +38,4 @@ backend/croked.db
 backend/app/market_cache.db
 
 
+.vercel

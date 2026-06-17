@@ -1,6 +1,6 @@
 # CROKED — Production Deployment Guide
 
-This guide details how to deploy the **CROKED** Indian Stock Prediction Web App in production. 
+This guide details how to deploy the **CROKED** Indian Stock Prediction Web App in production.
 
 ---
 

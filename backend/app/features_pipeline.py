@@ -104,8 +104,7 @@ def fetch_ohlcv_with_cache(symbol: str, period: str, interval: str = "1d") -> pd
     # Fetch fresh
     logger.info(f"Fetching fresh data for context ticker: {symbol} ({period}, {interval})")
     try:
-        session = _create_yfinance_session()
-        ticker = yf.Ticker(symbol, session=session)
+        ticker = yf.Ticker(symbol)
         df = ticker.history(period=period, interval=interval, auto_adjust=True)
         if df.empty and period != "max":
             logger.info(f"Empty data for {symbol} with period {period}, falling back to 'max'")
@@ -170,8 +169,7 @@ def fetch_live_quote_cached(symbol: str) -> dict:
 
     # yfinance fallback
     try:
-        session = _create_yfinance_session()
-        ticker = yf.Ticker(symbol, session=session)
+        ticker = yf.Ticker(symbol)
         # Fetching 2d is safest to get current/previous trading days
         df = ticker.history(period="2d", interval="1d", auto_adjust=True)
         if not df.empty:
