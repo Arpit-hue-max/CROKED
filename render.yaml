@@ -27,3 +27,12 @@ services:
         sync: false
       - key: EMAIL_FROM
         sync: false
+      - key: ANGELONE_API_KEY
+        sync: false
+      - key: ANGELONE_CLIENT_CODE
+        sync: false
+      - key: ANGELONE_PASSWORD
+        sync: false
+      - key: ANGELONE_TOTP_SECRET
+        sync: false
+
