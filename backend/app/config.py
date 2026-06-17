@@ -6,7 +6,7 @@ class Settings(BaseSettings):
 
     api_host: str = "0.0.0.0"
     api_port: int = 8000
-    cors_origins: str = "http://localhost:3000"
+    cors_origins: str = "https://croked.vercel.app,http://localhost:3000"
     rate_limit: str = "30/minute"
     alpha_vantage_api_key: str = ""
     finnhub_api_key: str = ""
