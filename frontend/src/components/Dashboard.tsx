@@ -81,6 +81,7 @@ export default function Dashboard() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<{ email: string } | null>(null);
   const [watchlist, setWatchlist] = useState<WatchlistStock[]>([]);
+  const [authChecking, setAuthChecking] = useState(true);
   const [currentTab, setCurrentTab] = useState<"dashboard" | "drift">("dashboard");
   const [subTab, setSubTab] = useState<"news" | "institutional" | "macro" | "delivery">("news");
 
@@ -300,7 +301,13 @@ export default function Dashboard() {
       const savedToken = localStorage.getItem("token");
       const savedAccent = localStorage.getItem("accentColor") as "cyan" | "emerald" | "indigo" | "violet" | null;
       setTimeout(() => {
-        setToken(savedToken);
+        if (savedToken && savedToken !== "undefined" && savedToken !== "null") {
+          setToken(savedToken);
+        } else {
+          localStorage.removeItem("token");
+          setToken(null);
+          setAuthChecking(false);
+        }
         if (savedAccent && ["cyan", "emerald", "indigo", "violet"].includes(savedAccent)) {
           setAccentColor(savedAccent);
         }
@@ -345,9 +352,10 @@ export default function Dashboard() {
 
   // Fetch me and watchlist on token update
   const loadUserData = useCallback(async () => {
-    if (!token) {
+    if (!token || token === "undefined" || token === "null") {
       setUser(null);
       setWatchlist([]);
+      setAuthChecking(false);
       return;
     }
     try {
@@ -358,6 +366,10 @@ export default function Dashboard() {
     } catch {
       localStorage.removeItem("token");
       setToken(null);
+      setUser(null);
+      setWatchlist([]);
+    } finally {
+      setAuthChecking(false);
     }
   }, [token]);
 
@@ -687,6 +699,17 @@ export default function Dashboard() {
     { symbol: worstStock.symbol, name: `💀 WORST STOCK: ${worstStock.name}`, price: worstStock.price.toLocaleString("en-IN", { minimumFractionDigits: 2 }), pct: `${worstStock.pct >= 0 ? "+" : ""}${worstStock.pct.toFixed(2)}%`, isPositive: false },
     { symbol: "CL=F", name: "Crude Oil", price: "78.45", pct: "-1.44%", isPositive: false }
   ];
+
+  if (authChecking) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020617] text-white">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-amber-500 border-t-transparent"></div>
+          <p className="text-[10px] font-black tracking-widest text-slate-500 uppercase">Verifying secure session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-transparent text-slate-800">
