@@ -216,6 +216,11 @@ def walk_forward_backtest(
         "message": None,
     }
     _BACKTEST_CACHE[cache_key] = result
+    
+    # Clean up memory
+    import gc
+    gc.collect()
+    
     return result
 
 
@@ -401,5 +406,10 @@ def generate_prediction(df: pd.DataFrame, forecast_days: int = 5, model_name: st
         ),
     }
     _PREDICTION_CACHE[cache_key] = result
+    
+    # Clean up memory
+    import gc
+    gc.collect()
+    
     return result
 

@@ -13,6 +13,16 @@ services:
         value: https://croked.vercel.app,http://localhost:3000
       - key: RATE_LIMIT
         value: "60/minute"
+      - key: OMP_NUM_THREADS
+        value: "1"
+      - key: MKL_NUM_THREADS
+        value: "1"
+      - key: OPENBLAS_NUM_THREADS
+        value: "1"
+      - key: VECLIB_MAXIMUM_THREADS
+        value: "1"
+      - key: NUMEXPR_NUM_THREADS
+        value: "1"
       - key: DATABASE_URL
         sync: false  # Set manually in Render dashboard
       - key: JWT_SECRET

@@ -113,4 +113,13 @@ def train_and_predict_lstm(
         X_test_t = torch.tensor(X_test_seq, dtype=torch.float32)
         preds = model(X_test_t).numpy().flatten()
         
+    # Clean up memory
+    import gc
+    del model
+    del optimizer
+    del X_train_t
+    del y_train_t
+    del X_test_t
+    gc.collect()
+    
     return preds
