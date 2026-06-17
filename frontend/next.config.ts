@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // "standalone" is only for Docker/self-hosted builds — Vercel does NOT support it.
+  // Set STANDALONE_BUILD=true in your Dockerfile to enable it for Docker deployments.
+  ...(process.env.STANDALONE_BUILD === "true" ? { output: "standalone" as const } : {}),
   devIndicators: false,
 };
 
