@@ -311,27 +311,33 @@ async def stock_predict(
         raise HTTPException(status_code=500, detail="Prediction service error. Try again later.") from exc
 
 
-@app.post("/api/auth/register", response_model=UserResponse)
+@app.post("/api/auth/register")
 @limiter.limit(settings.rate_limit)
 async def register(request: Request, user_in: UserRegister, db: Session = Depends(get_db)):
-    existing = db.query(User).filter(User.email == user_in.email).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    hashed_password = get_password_hash(user_in.password)
-    user = User(email=user_in.email, hashed_password=hashed_password)
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-
-    # Send welcome email (non-blocking — registration succeeds even if email fails)
     try:
-        from app.email_service import send_welcome_email
-        send_welcome_email(user.email)
-    except Exception as e:
-        logger.warning(f"Could not send welcome email to {user.email}: {e}")
+        existing = db.query(User).filter(User.email == user_in.email).first()
+        if existing:
+            return JSONResponse(status_code=400, content={"detail": "Email already registered"})
+        
+        hashed_password = get_password_hash(user_in.password)
+        user = User(email=user_in.email, hashed_password=hashed_password)
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-    return user
+        # Send welcome email (non-blocking)
+        try:
+            from app.email_service import send_welcome_email
+            send_welcome_email(user.email)
+        except Exception as e:
+            logger.warning(f"Could not send welcome email to {user.email}: {e}")
+
+        return UserResponse(id=user.id, email=user.email)
+    except Exception as e:
+        import traceback
+        tb = traceback.format_exc()
+        logger.error(f"Registration crash: {e}\n{tb}")
+        return JSONResponse(status_code=400, content={"detail": f"Registration failed: {str(e)}", "traceback": tb})
 
 
 @app.post("/api/auth/login", response_model=Token)
