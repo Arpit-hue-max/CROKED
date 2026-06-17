@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: croked-api
+    runtime: python
+    region: singapore  # Closest to India for low latency
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.12"
+      - key: CORS_ORIGINS
+        value: https://croked.vercel.app,http://localhost:3000
+      - key: RATE_LIMIT
+        value: "60/minute"
+      - key: DATABASE_URL
+        sync: false  # Set manually in Render dashboard
+      - key: JWT_SECRET
+        generateValue: true  # Render auto-generates a secure random string
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
