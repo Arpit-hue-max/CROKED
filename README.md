@@ -53,7 +53,7 @@ copy .env.example .env.local   # Windows
 npm run dev
 ```
 
-App: http://localhost:3000
+App: http://croked.vercel.app
 
 ### 3. Docker (optional)
 
